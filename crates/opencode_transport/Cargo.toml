@@ -8,12 +8,31 @@ license.workspace = true
 
 [dependencies]
 anyhow.workspace = true
+# `async-process` is an explicit dep so we can name `async_process::Child` in
+# function signatures. Subprocess *spawning* still goes through
+# `command::r#async::Command` (the `Command` type itself is forbidden by
+# `.clippy.toml` outside the `command` crate).
+async-process.workspace = true
 async-stream.workspace = true
+command.workspace = true
 futures.workspace = true
+instant.workspace = true
 reqwest.workspace = true
 reqwest-eventsource.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 thiserror.workspace = true
-tokio = { workspace = true, features = ["macros", "process", "rt", "sync", "time"] }
+# `process` feature is intentionally omitted: `std::process::Command`,
+# `async_process::Command`, and `tokio::process::Command` are all forbidden by
+# `.clippy.toml`. Subprocess work goes through `command::r#async::Command`.
+tokio = { workspace = true, features = ["macros", "rt", "sync", "time"] }
 tracing.workspace = true
+
+[dev-dependencies]
+# `rustls` is needed to install the default crypto provider in tests; the
+# workspace's `reqwest` is configured with `rustls-tls-native-roots-no-provider`,
+# so any test that constructs a `reqwest::Client` panics with "No provider set"
+# unless the test installs one (matches `app::run()` startup at `app/src/lib.rs`).
+rustls.workspace = true
+tempfile.workspace = true
+tokio = { workspace = true, features = ["macros", "rt", "rt-multi-thread", "sync", "time"] }
