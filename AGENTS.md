@@ -4,6 +4,16 @@ Warp is a Rust-based terminal with an in-house GPU UI framework, deep AI integra
 
 For deeper engineering context, also read [`WARP.md`](./WARP.md) (architecture, build/test/lint commands, coding style, terminal-model-locking, feature-flag rollout, exhaustive-match rule). Do not duplicate WARP.md here — link to it.
 
+## rtk policy
+
+Use `rtk` for all high-volume shell commands. `rtk` is a CLI proxy that filters and compresses noisy output before it reaches the agent context window.
+
+- Prefix with `rtk` for: `git status`, `git diff`, `git log`, `gh`, `find`, `grep`, `tree`, `ls`, `docker`, `kubectl`, `cargo test`, `cargo nextest`, log reads on large files.
+- Do **not** use `rtk` when exact unfiltered output is required (e.g. parsing a config, debugging a tool that depends on byte-exact output).
+- Do **not** stack `rtk` with another output reducer.
+
+See `/home/lawrence/AGENTS.md` for the cross-project policy.
+
 ## Map of AGENTS.md files
 
 Read the most-specific AGENTS.md for the directory you are touching. Each scoped file documents only what is unique to that subtree.
