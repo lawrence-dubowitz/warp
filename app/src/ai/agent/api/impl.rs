@@ -14,6 +14,28 @@ pub async fn generate_multi_agent_output(
     mut params: RequestParams,
     cancellation_rx: futures::channel::oneshot::Receiver<()>,
 ) -> Result<ResponseStream, ConvertToAPITypeError> {
+    // Backend selector: when `FeatureFlag::UseOpencodeAsPrimaryAgent` is
+    // enabled, route this turn to the opencode backend instead of the
+    // legacy Warp multi-agent server. The flag lives in `DEBUG_FLAGS`
+    // only for now; per-conversation `BackendKind` stickiness lands in
+    // Stream 3 (`bd: warp-317.3`), at which point this branch will read
+    // the conversation's recorded backend kind and only fall back to the
+    // flag for new conversations.
+    //
+    // Stream-1 stub: `opencode_backend::backend::run_turn` returns an
+    // empty stream + a `warn!` log so the seam is exercised but no real
+    // opencode traffic flows yet (Stream 2 = `bd: warp-317.2`).
+    //
+    // Spec: `specs/opencode-as-primary-agent/TECH.md` §7.
+    // bd: warp-317.1.7.
+    if FeatureFlag::UseOpencodeAsPrimaryAgent.is_enabled() {
+        return Ok(crate::ai::agent::opencode_backend::backend::run_turn(
+            server_api,
+            params,
+            cancellation_rx,
+        ));
+    }
+
     let supported_tools = params
         .supported_tools_override
         .take()

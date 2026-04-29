@@ -22,6 +22,10 @@ use std::sync::Arc;
 use opencode_transport::http_client::OpencodeClient;
 use opencode_transport::process_supervisor::Supervisor;
 use opencode_transport::sse_demuxer::SseDemuxer;
+use tracing::warn;
+
+use crate::ai::agent::api::{RequestParams, ResponseStream};
+use crate::server::server_api::ServerApi;
 
 /// Shared handle for the opencode backend.
 ///
@@ -62,4 +66,35 @@ impl OpencodeBackend {
             http,
         }
     }
+}
+
+/// Stream-1 entry point for the opencode backend selector.
+///
+/// Mirrors the signature of
+/// [`crate::ai::agent::api::generate_multi_agent_output`] so the
+/// selector branch in `app/src/ai/agent/api/impl.rs` can dispatch to
+/// either the legacy Warp path or this stub without adapter shims.
+///
+/// Phase 1: returns an empty `ResponseStream` and logs a warning. The
+/// real implementation (session creation, prompt submission, SSE event
+/// fan-in, parked-call state machine) lands in Stream 2
+/// (`bd: warp-317.2`).
+///
+/// `_server_api`, `_params`, and `_cancellation_rx` are accepted to fix
+/// the call shape now; they will be consumed once the real backend
+/// wires up.
+///
+/// Spec: `specs/opencode-as-primary-agent/TECH.md` §7.
+/// bd: warp-317.1.7 (this stub); warp-317.2 (real implementation).
+pub(crate) fn run_turn(
+    _server_api: Arc<ServerApi>,
+    _params: RequestParams,
+    _cancellation_rx: futures::channel::oneshot::Receiver<()>,
+) -> ResponseStream {
+    warn!(
+        "opencode_backend::run_turn invoked but Stream 2 not yet implemented; \
+         FeatureFlag::UseOpencodeAsPrimaryAgent is enabled but no opencode traffic \
+         flows yet. bd: warp-317.2"
+    );
+    Box::pin(futures::stream::empty())
 }
