@@ -44,6 +44,11 @@ Read the most-specific AGENTS.md for the directory you are touching. Each scoped
 - **HTTP**: `reqwest` + `rustls`. **DB**: Diesel + SQLite. **GraphQL client**: `cynic`.
 - **Targets**: macOS, Linux, Windows, WASM (`wasm32-unknown-unknown`). The WASM build is a real target — gate filesystem and other native APIs.
 
+## Local Environment Issues
+
+- **`command-signatures-v2` build failure**: The build script for this crate requires Node 18.14.1 and yarn/corepack. On some Linux dev boxes, this causes `cargo clippy --workspace` to panic.
+  - **Workaround**: Use scoped clippy: `cargo clippy -p warp -p <other_crates> ...` or exclude the crate explicitly.
+
 ## Canonical commands
 
 There is no top-level `Makefile`/`Justfile`. Canonical workflow is `./script/*` plus `cargo nextest`.
