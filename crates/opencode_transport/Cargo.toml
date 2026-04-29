@@ -8,6 +8,11 @@ license.workspace = true
 
 [dependencies]
 anyhow.workspace = true
+# `async-channel` powers per-session event fan-out in `sse_demuxer`. We use it
+# (rather than `tokio::sync::broadcast` or `async_broadcast`) because every
+# subscriber gets its own dedicated unbounded channel keyed by session id, so
+# fan-out is many independent mpsc queues, not one shared queue.
+async-channel.workspace = true
 # `async-process` is an explicit dep so we can name `async_process::Child` in
 # function signatures. Subprocess *spawning* still goes through
 # `command::r#async::Command` (the `Command` type itself is forbidden by
@@ -16,7 +21,9 @@ async-process.workspace = true
 async-stream.workspace = true
 command.workspace = true
 futures.workspace = true
+futures-util.workspace = true
 instant.workspace = true
+parking_lot.workspace = true
 reqwest.workspace = true
 reqwest-eventsource.workspace = true
 serde.workspace = true

@@ -146,3 +146,34 @@ pub struct NotFoundError {
 pub struct NotFoundErrorData {
     pub message: String,
 }
+
+/// Bus-event envelope written to `GET /event` SSE frames.
+///
+/// Upstream shape (`packages/opencode/src/bus/bus-event.ts`):
+///   `{ type: <literal>, properties: <typed> }`
+///
+/// Session-bearing events carry `properties.sessionID`. Non-session events
+/// (e.g. `server.connected`, `server.heartbeat`, `lsp.client.diagnostics`)
+/// have no `sessionID` in their properties and are dropped by the demuxer.
+///
+/// `properties` is intentionally a `serde_json::Value` for forward-compat:
+/// the 47-variant upstream union grows over time, and the demuxer only
+/// needs `sessionID` for routing. Backend consumers that care about a
+/// specific event variant deserialize `properties` into a typed struct.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct OpencodeEvent {
+    /// Event discriminant, e.g. `"message.part.delta"` or `"session.idle"`.
+    #[serde(rename = "type")]
+    pub r#type: String,
+    /// Event-specific payload. Schema varies by `type`.
+    pub properties: serde_json::Value,
+}
+
+impl OpencodeEvent {
+    /// Returns `properties.sessionID` if the event carries one.
+    ///
+    /// Used by `sse_demuxer` to route events to per-session subscribers.
+    pub fn session_id(&self) -> Option<&str> {
+        self.properties.get("sessionID").and_then(|v| v.as_str())
+    }
+}
