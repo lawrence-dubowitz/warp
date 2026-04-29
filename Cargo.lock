@@ -8970,6 +8970,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "opencode_transport"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "async-stream",
+ "futures",
+ "reqwest",
+ "reqwest-eventsource",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.17",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
 name = "openh264"
 version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
