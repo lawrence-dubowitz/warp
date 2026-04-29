@@ -228,9 +228,7 @@ impl Supervisor {
         }
     }
 
-    async fn spawn_and_wait_ready(
-        &self,
-    ) -> Result<(Child, HttpEndpoint), SupervisorError> {
+    async fn spawn_and_wait_ready(&self) -> Result<(Child, HttpEndpoint), SupervisorError> {
         let config = &self.inner.config;
         let port = pick_free_port(&config.host)?;
         let mut cmd = build_command(config, port);
@@ -268,8 +266,7 @@ fn build_command(config: &SupervisorConfig, port: u16) -> Command {
 }
 
 fn pick_free_port(host: &str) -> Result<u16, SupervisorError> {
-    let listener =
-        TcpListener::bind((host, 0)).map_err(SupervisorError::PortAllocation)?;
+    let listener = TcpListener::bind((host, 0)).map_err(SupervisorError::PortAllocation)?;
     let port = listener
         .local_addr()
         .map_err(SupervisorError::PortAllocation)?

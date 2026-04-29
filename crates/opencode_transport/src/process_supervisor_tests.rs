@@ -66,8 +66,9 @@ async fn shutdown_blocks_subsequent_ensure_running() {
 #[cfg(unix)]
 #[tokio::test]
 async fn ensure_running_returns_spawn_error_for_missing_binary() {
-    let supervisor =
-        Supervisor::new(SupervisorConfig::new(PathBuf::from("/nonexistent/opencode")));
+    let supervisor = Supervisor::new(SupervisorConfig::new(PathBuf::from(
+        "/nonexistent/opencode",
+    )));
     let result = supervisor.ensure_running().await;
     assert!(
         matches!(result, Err(SupervisorError::Spawn { .. })),

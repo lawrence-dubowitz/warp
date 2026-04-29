@@ -29,6 +29,7 @@ tokio = { workspace = true, features = ["macros", "rt", "sync", "time"] }
 tracing.workspace = true
 
 [dev-dependencies]
+mockito.workspace = true
 # `rustls` is needed to install the default crypto provider in tests; the
 # workspace's `reqwest` is configured with `rustls-tls-native-roots-no-provider`,
 # so any test that constructs a `reqwest::Client` panics with "No provider set"
