@@ -14310,6 +14310,7 @@ dependencies = [
  "objc2-foundation 0.3.2",
  "onboarding",
  "once_cell",
+ "opencode_transport",
  "ordered-float 3.9.2",
  "os_info",
  "palette",
