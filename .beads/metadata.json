@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "warp",
+  "project_id": "f2461285-3fe3-426a-be4b-77307de26c4f"
+}
