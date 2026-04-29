@@ -8,6 +8,7 @@ license.workspace = true
 
 [dependencies]
 anyhow.workspace = true
+async-trait.workspace = true
 # `async-channel` powers per-session event fan-out in `sse_demuxer`. We use it
 # (rather than `tokio::sync::broadcast` or `async_broadcast`) because every
 # subscriber gets its own dedicated unbounded channel keyed by session id, so
@@ -32,7 +33,7 @@ thiserror.workspace = true
 # `process` feature is intentionally omitted: `std::process::Command`,
 # `async_process::Command`, and `tokio::process::Command` are all forbidden by
 # `.clippy.toml`. Subprocess work goes through `command::r#async::Command`.
-tokio = { workspace = true, features = ["macros", "rt", "sync", "time"] }
+tokio = { workspace = true, features = ["io-util", "macros", "net", "rt", "sync", "time"] }
 tracing.workspace = true
 
 [dev-dependencies]

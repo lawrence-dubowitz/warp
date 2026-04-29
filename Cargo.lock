@@ -8977,6 +8977,7 @@ dependencies = [
  "async-channel",
  "async-process",
  "async-stream",
+ "async-trait",
  "command",
  "futures",
  "futures-util",
