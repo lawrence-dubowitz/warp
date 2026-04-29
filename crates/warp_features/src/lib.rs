@@ -89,6 +89,12 @@ pub enum FeatureFlag {
     /// Also collects block data for Next Command, if enabled.
     AgentModeAnalytics,
 
+    /// Route Agent Mode through opencode (out-of-process) instead of the
+    /// embedded `warp_multi_agent_api` agent. Debug-only while in development.
+    /// Selection happens at conversation creation time; existing conversations
+    /// keep their original backend. See `specs/opencode-as-primary-agent/TECH.md`.
+    UseOpencodeAsPrimaryAgent,
+
     /// A setting to enable a traditional completions experience.
     ClassicCompletions,
 
@@ -852,7 +858,11 @@ static USER_PREFERENCE_MAP: [AtomicTriState; cardinality::<FeatureFlag>()] =
 static FEATURES_INITIALIZED: AtomicBool = AtomicBool::new(false);
 
 /// Features used in debugging.
-pub const DEBUG_FLAGS: &[FeatureFlag] = &[FeatureFlag::DebugMode, FeatureFlag::RuntimeFeatureFlags];
+pub const DEBUG_FLAGS: &[FeatureFlag] = &[
+    FeatureFlag::DebugMode,
+    FeatureFlag::RuntimeFeatureFlags,
+    FeatureFlag::UseOpencodeAsPrimaryAgent,
+];
 
 /// Features enabled for the development team.  The expectation is that, over
 /// time, these will move on to PREVIEW_FLAGS before being launched.
